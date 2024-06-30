@@ -25,9 +25,9 @@ E-commerce — электронная торговля, или электрон�
 
 ## Установка:
 
-1. Клонируйте [репозиторий](https://github.com/El1Futuro/SkyProHomework.git):
+1. Клонируйте [репозиторий](https://github.com/El1Futuro/E-commerce.SkyPro.git):
 ~~~ 
-git clone https://github.com/El1Futuro/SkyProHomework.git 
+git clone https://github.com/El1Futuro/E-commerce.SkyPro.git 
 ~~~
 2. Установите зависимости:
 ```
