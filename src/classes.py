@@ -1,10 +1,5 @@
-from src.json_loads import (
-    get_category_description,
-    get_category_products,
-    get_list_categories,
-    get_name_of_categories,
-    json_file_path,
-)
+from src.json_loads import (get_category_description, get_category_products, get_list_categories,
+                            get_name_of_categories, json_file_path)
 
 
 class Category:
