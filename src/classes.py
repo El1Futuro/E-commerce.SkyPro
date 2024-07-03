@@ -1,43 +1,7 @@
+from typing import Any, List
+
 from src.json_loads import (get_category_description, get_category_products, get_list_categories,
                             get_name_of_categories, json_file_path)
-
-
-class Category:
-    total_categories = 0
-    total_unique_products = 0
-
-    name: str
-    description: str
-    products: list
-
-    def __init__(self, name: str, description: str, products: list) -> None:
-        """Метод для инициализации экземпляра класса. Задаем значения атрибутам экземпляра."""
-        self.name = name
-        self.description = description
-        self.products = products
-
-        # Увеличиваем счетчик общего количества категорий
-        Category.total_categories += 1
-
-        # Увеличиваем счетчик общего количества уникальных продуктов
-        unique_products = []
-        for product in self.products:
-            if product not in unique_products:
-                unique_products.append(product)
-                Category.total_unique_products += 1
-
-
-category_1 = Category(
-    get_name_of_categories(list_categories=get_list_categories(json_file_path))[0],
-    get_category_description(list_categories=get_list_categories(json_file_path))[0],
-    get_category_products(list_categories=get_list_categories(json_file_path))["Смартфоны"],
-)
-
-category_2 = Category(
-    get_name_of_categories(list_categories=get_list_categories(json_file_path))[1],
-    get_category_description(list_categories=get_list_categories(json_file_path))[1],
-    get_category_products(list_categories=get_list_categories(json_file_path))["Телевизоры"],
-)
 
 
 class Product:
@@ -53,44 +17,132 @@ class Product:
         self.price = price
         self.quantity = quantity
 
+    @classmethod
+    def create_product(cls, name: str, description: str, price: float, quantity: int) -> "Product":
+        """Метод для создания нового продукта и возвращения его экземпляра."""
+        return cls(name, description, price, quantity)
+
+    @property
+    def _price(self) -> float:
+        return self._price
+
+    @_price.setter
+    def _price(self, value: float) -> Any:
+        if value <= 0:
+            print("Цена введена некорректная.")
+        else:
+            self._price = value
+
+
+class Category:
+    total_categories = 0
+    total_unique_products = 0
+
+    name: str
+    description: str
+    products: list
+
+    def __init__(self, name: str, description: str, products: list) -> None:
+        """Метод для инициализации экземпляра класса. Задаем значения атрибутам экземпляра."""
+        self.name = name
+        self.description = description
+        self.__products = []
+        for product in products:
+            name = product[0]
+            price = float(product[1])
+            quantity = int(product[2])
+            product_obj = Product(name, "", price, quantity)
+            self.__products.append(product_obj)
+
+        # Увеличиваем счетчик общего количества категорий
+        Category.total_categories += 1
+
+        # Увеличиваем счетчик общего количества уникальных продуктов
+        unique_products = []
+        for product in self.__products:
+            if product.name not in unique_products:
+                unique_products.append(product)
+                Category.total_unique_products += 1
+
+    def get_products(self) -> List[Product]:
+        return self.__products
+
+    @property
+    def products_list(self) -> str:
+        """Возвращает список товаров в формате:
+        Название товара, Цена руб. Остаток: Количество шт.
+        """
+        result = ""
+        for product in self.__products:
+            result += f"{product.name}, {product.price} руб. Остаток: {product.quantity} шт.\n"
+        return result
+
+
+# Получаем список категорий из файла JSON
+list_categories = get_list_categories(json_file_path)
+
+
+# Создаем объекты классов Category и Product
+category_1 = Category(
+    get_name_of_categories(list_categories)[0],
+    get_category_description(list_categories)[0],
+    get_category_products(list_categories)["Смартфоны"],
+)
+
+# Выводим список товаров для category_1
+print(category_1.products_list)
+
+category_2 = Category(
+    get_name_of_categories(list_categories)[1],
+    get_category_description(list_categories)[1],
+    get_category_products(list_categories)["Телевизоры"],
+)
+# Выводим список товаров для category_2
+print(category_2.products_list)
+
 
 product_1 = Product(
-    get_list_categories(json_file_path)[0]["products"][0]["name"],
-    get_list_categories(json_file_path)[0]["products"][0]["description"],
-    get_list_categories(json_file_path)[0]["products"][0]["price"],
-    get_list_categories(json_file_path)[0]["products"][0]["quantity"],
+    list_categories[0]["products"][0]["name"],
+    list_categories[0]["products"][0]["description"],
+    list_categories[0]["products"][0]["price"],
+    list_categories[0]["products"][0]["quantity"],
 )
 
 product_2 = Product(
-    get_list_categories(json_file_path)[0]["products"][1]["name"],
-    get_list_categories(json_file_path)[0]["products"][1]["description"],
-    get_list_categories(json_file_path)[0]["products"][1]["price"],
-    get_list_categories(json_file_path)[0]["products"][1]["quantity"],
+    list_categories[0]["products"][1]["name"],
+    list_categories[0]["products"][1]["description"],
+    list_categories[0]["products"][1]["price"],
+    list_categories[0]["products"][1]["quantity"],
 )
 
 product_3 = Product(
-    get_list_categories(json_file_path)[0]["products"][2]["name"],
-    get_list_categories(json_file_path)[0]["products"][2]["description"],
-    get_list_categories(json_file_path)[0]["products"][2]["price"],
-    get_list_categories(json_file_path)[0]["products"][2]["quantity"],
+    list_categories[0]["products"][2]["name"],
+    list_categories[0]["products"][2]["description"],
+    list_categories[0]["products"][2]["price"],
+    list_categories[0]["products"][2]["quantity"],
 )
 
 product_4 = Product(
-    get_list_categories(json_file_path)[1]["products"][0]["name"],
-    get_list_categories(json_file_path)[1]["products"][0]["description"],
-    get_list_categories(json_file_path)[1]["products"][0]["price"],
-    get_list_categories(json_file_path)[1]["products"][0]["quantity"],
+    list_categories[1]["products"][0]["name"],
+    list_categories[1]["products"][0]["description"],
+    list_categories[1]["products"][0]["price"],
+    list_categories[1]["products"][0]["quantity"],
 )
+
+product_5 = Product.create_product("Продукт 5", "Описание продукта 1", 80.0, 15)
+product_6 = Product.create_product("Продукт 6", "Описание продукта 2", 100.0, 20)
 
 
 print(f"Общее количество категорий товаров: {Category.total_categories}")
 print(f"Общее количество уникальных товаров: {Category.total_unique_products}")
 print(f"Категория товара: {category_1.name}")
 print(f"Описание категории: {category_1.description}")
-print(f"Список товаров в категории: {category_1.products}")
+print(f"Список товаров в категории: {[product[0] for product in get_category_products(list_categories)["Смартфоны"]]}")
 print(f"Категория товара: {category_2.name}")
 print(f"Описание категории: {category_2.description}")
-print(f"Список товаров в категории: {category_2.products}")
+print(
+    f"Список товаров в категории: {[product[0] for product in get_category_products(list_categories)["Телевизоры"]]}"
+)
 print()
 print(f"Название продукта: {product_1.name}")
 print(f"Описание продукта: {product_1.description}")

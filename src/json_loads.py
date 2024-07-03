@@ -45,19 +45,18 @@ def get_category_description(list_categories: list) -> list:
 get_category_description(get_list_categories(json_file_path))
 
 
-def get_category_products(list_categories: list) -> dict:
-    """Функция получает данные из JSON-файла и возвращает словарь,
-    где ключ - категория товара, значение - список товаров в категории"""
-    category_products = {}
-    for category in list_categories:
-        if "name" in category:
-            category_name = category["name"]
-            if "products" in category:
-                products = []
-                for product in category["products"]:
-                    products.append(product["name"])
-                category_products[category_name] = products
-    return category_products
+def get_category_products(categories: list[dict]) -> dict:
+    """Возвращает словарь с названием категории и списком товаров в ней."""
+    result = {}
+    for category in categories:
+        products = []
+        for product in category["products"]:
+            name = product["name"]
+            price = product["price"]
+            quantity = product["quantity"]
+            products.append([name, price, quantity])
+        result[category["name"]] = products
+    return result
 
 
 get_category_products(get_list_categories(json_file_path))
