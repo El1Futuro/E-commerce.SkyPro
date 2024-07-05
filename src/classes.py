@@ -17,6 +17,17 @@ class Product:
         self.price = price
         self.quantity = quantity
 
+    def __str__(self) -> str:
+        return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
+
+    def __add__(self, other: Any) -> float:
+        self.sales_revenue = self.price * self.quantity
+        other.sales_revenue = other.price * other.quantity
+        return self.sales_revenue + other.sales_revenue
+
+    def __len__(self) -> int:
+        return len(self.description)
+
     @classmethod
     def create_product(cls, name: str, description: str, price: float, quantity: int) -> "Product":
         """Метод для создания нового продукта и возвращения его экземпляра."""
@@ -49,9 +60,10 @@ class Category:
         self.__products = []
         for product in products:
             name = product[0]
+            description = ""
             price = float(product[1])
             quantity = int(product[2])
-            product_obj = Product(name, "", price, quantity)
+            product_obj = Product(name, description, price, quantity)
             self.__products.append(product_obj)
 
         # Увеличиваем счетчик общего количества категорий
@@ -63,6 +75,13 @@ class Category:
             if product.name not in unique_products:
                 unique_products.append(product)
                 Category.total_unique_products += 1
+
+    def __str__(self) -> str:
+        all_quantity = len(self)
+        return f"{self.name}, количество продуктов: {all_quantity}"
+
+    def __len__(self) -> int:
+        return sum(product.quantity for product in self.__products)
 
     def get_products(self) -> List[Product]:
         return self.__products
@@ -88,7 +107,8 @@ category_1 = Category(
     get_category_description(list_categories)[0],
     get_category_products(list_categories)["Смартфоны"],
 )
-
+print(category_1)
+print()
 # Выводим список товаров для category_1
 print(category_1.products_list)
 
@@ -107,7 +127,9 @@ product_1 = Product(
     list_categories[0]["products"][0]["price"],
     list_categories[0]["products"][0]["quantity"],
 )
-
+print(product_1)
+print(len(product_1))
+print()
 product_2 = Product(
     list_categories[0]["products"][1]["name"],
     list_categories[0]["products"][1]["description"],
@@ -128,6 +150,8 @@ product_4 = Product(
     list_categories[1]["products"][0]["price"],
     list_categories[1]["products"][0]["quantity"],
 )
+print(product_1 + product_2)
+print()
 
 product_5 = Product.create_product("Продукт 5", "Описание продукта 1", 80.0, 15)
 product_6 = Product.create_product("Продукт 6", "Описание продукта 2", 100.0, 20)
