@@ -1,11 +1,17 @@
 from typing import Any, List
 
-from src.json_loads import (get_category_description, get_category_products, get_list_categories,
-                            get_name_of_categories, json_file_path)
+from src.json_loads import (
+    get_category_description,
+    get_category_products,
+    get_list_categories,
+    get_name_of_categories,
+    json_file_path,
+)
 
 
 class Product:
     """Основной класс продуктов"""
+
     name: str
     description: str
     price: float
@@ -22,7 +28,7 @@ class Product:
         return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
 
     def __add__(self, other: Any) -> float:
-        if type(self) == type(other):
+        if type(other) is self.__class__:
             # if isinstance(other, self.__class__):
             self.sales_revenue = self.price * self.quantity
             other.sales_revenue = other.price * other.quantity
@@ -52,13 +58,23 @@ class Product:
 
 class Smartphones(Product):
     """Дочерний класс от класса Product"""
+
     performance: float
     model: str
     built_in_memory_capacity: int
     colour: str
 
-    def __init__(self, name: str, description: str, price: float, quantity: int, performance: float,
-                 model: str, built_in_memory_capacity: int, colour: str) -> None:
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        price: float,
+        quantity: int,
+        performance: float,
+        model: str,
+        built_in_memory_capacity: int,
+        colour: str,
+    ) -> None:
         """Метод для инициализации экземпляра класса. Задаем значения атрибутам экземпляра."""
         super().__init__(name, description, price, quantity)
         self.performance = performance
@@ -69,12 +85,21 @@ class Smartphones(Product):
 
 class LawnGrass(Product):
     """Дочерний класс от класса Product"""
+
     country: str
     germination_period: int
     colour: str
 
-    def __init__(self, name: str, description: str, price: float, quantity: int, country: str,
-                 germination_period: int, colour: str) -> None:
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        price: float,
+        quantity: int,
+        country: str,
+        germination_period: int,
+        colour: str,
+    ) -> None:
         """Метод для инициализации экземпляра класса. Задаем значения атрибутам экземпляра."""
         super().__init__(name, description, price, quantity)
         self.country = country
@@ -113,7 +138,7 @@ class Category:
                 unique_products.append(product)
                 Category.total_unique_products += 1
 
-    def add_product(self, product):
+    def add_product(self, product: str) -> None:
         if not isinstance(product, Product):
             raise TypeError
         self.products.append(product)
@@ -142,7 +167,6 @@ class Category:
 # Получаем список категорий из файла JSON
 list_categories = get_list_categories(json_file_path)
 
-
 # Создаем объекты классов Category и Product
 category_1 = Category(
     get_name_of_categories(list_categories)[0],
@@ -161,7 +185,6 @@ category_2 = Category(
 )
 # Выводим список товаров для category_2
 print(category_2.products_list)
-
 
 product_1 = Product(
     list_categories[0]["products"][0]["name"],
@@ -197,7 +220,6 @@ print()
 
 product_5 = Product.create_product("Продукт 5", "Описание продукта 1", 80.0, 15)
 product_6 = Product.create_product("Продукт 6", "Описание продукта 2", 100.0, 20)
-
 
 print(f"Общее количество категорий товаров: {Category.total_categories}")
 print(f"Общее количество уникальных товаров: {Category.total_unique_products}")
