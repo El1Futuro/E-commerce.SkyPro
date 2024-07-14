@@ -5,6 +5,7 @@ from src.json_loads import (get_category_description, get_category_products, get
 
 
 class Product:
+    """Основной класс продуктов"""
     name: str
     description: str
     price: float
@@ -21,9 +22,13 @@ class Product:
         return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
 
     def __add__(self, other: Any) -> float:
-        self.sales_revenue = self.price * self.quantity
-        other.sales_revenue = other.price * other.quantity
-        return self.sales_revenue + other.sales_revenue
+        if type(self) == type(other):
+            # if isinstance(other, self.__class__):
+            self.sales_revenue = self.price * self.quantity
+            other.sales_revenue = other.price * other.quantity
+            return self.sales_revenue + other.sales_revenue
+        else:
+            raise TypeError
 
     def __len__(self) -> int:
         return len(self.description)
@@ -43,6 +48,38 @@ class Product:
             print("Цена введена некорректная.")
         else:
             self._price = value
+
+
+class Smartphones(Product):
+    """Дочерний класс от класса Product"""
+    performance: float
+    model: str
+    built_in_memory_capacity: int
+    colour: str
+
+    def __init__(self, name: str, description: str, price: float, quantity: int, performance: float,
+                 model: str, built_in_memory_capacity: int, colour: str) -> None:
+        """Метод для инициализации экземпляра класса. Задаем значения атрибутам экземпляра."""
+        super().__init__(name, description, price, quantity)
+        self.performance = performance
+        self.model = model
+        self.built_in_memory_capacity = built_in_memory_capacity
+        self.colour = colour
+
+
+class LawnGrass(Product):
+    """Дочерний класс от класса Product"""
+    country: str
+    germination_period: int
+    colour: str
+
+    def __init__(self, name: str, description: str, price: float, quantity: int, country: str,
+                 germination_period: int, colour: str) -> None:
+        """Метод для инициализации экземпляра класса. Задаем значения атрибутам экземпляра."""
+        super().__init__(name, description, price, quantity)
+        self.country = country
+        self.germination_period = germination_period
+        self.colour = colour
 
 
 class Category:
@@ -75,6 +112,11 @@ class Category:
             if product.name not in unique_products:
                 unique_products.append(product)
                 Category.total_unique_products += 1
+
+    def add_product(self, product):
+        if not isinstance(product, Product):
+            raise TypeError
+        self.products.append(product)
 
     def __str__(self) -> str:
         all_quantity = len(self)
