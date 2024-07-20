@@ -1,7 +1,7 @@
-
-from src.classes import Category, Product, Smartphones, LawnGrass
-from src.json_loads import get_category_products, get_list_categories, get_name_of_categories, get_category_description
 import os
+
+from src.classes import Category, LawnGrass, Product, Smartphones
+from src.json_loads import get_category_description, get_category_products, get_list_categories, get_name_of_categories
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 json_file_path = os.path.join(current_dir, "data", "products.json")
@@ -21,7 +21,8 @@ category_1 = Category(
 category_2 = Category(
     get_name_of_categories(list_categories)[1],
     get_category_description(list_categories)[1],
-    get_category_products(list_categories)["Телевизоры"])
+    get_category_products(list_categories)["Телевизоры"],
+)
 
 
 product_1 = Product(
@@ -55,14 +56,23 @@ product_4 = Product(
 product_5 = Product.create_product("Продукт 5", "Описание продукта 5", 80.0, 15)
 product_6 = Product.create_product("Продукт 6", "Описание продукта 6", 100.0, 20)
 
-smartphone1 = Smartphones("Samsung Galaxy C23 Ultra", "Описание продукта", 180000.0, 5,
-                          3.36, "Galaxy C23 Ultra", "256GB", "Blue")
+smartphone1 = Smartphones(
+    "Samsung Galaxy C23 Ultra", "Описание продукта", 180000.0, 5, 3.36, "Galaxy C23 Ultra", "256GB", "Blue"
+)
 
-smartphone2 = Smartphones("Xiaomi Redmi Note 11", "Описание продукта", 31000.0, 14,
-                          3.36, "Redmi Note 11", "1024GB", "Gray")
+smartphone2 = Smartphones(
+    "Xiaomi Redmi Note 11", "Описание продукта", 31000.0, 14, 3.36, "Redmi Note 11", "1024GB", "Gray"
+)
 
-lawn_grass1 = LawnGrass("Мятлик луговой, сорт Гранит", "Американский сорт газонного назначения",
-                        48000.0, 10, "США", "21 день", "темно-зеленый")
+lawn_grass1 = LawnGrass(
+    "Мятлик луговой, сорт Гранит",
+    "Американский сорт газонного назначения",
+    48000.0,
+    10,
+    "США",
+    "21 день",
+    "темно-зеленый",
+)
 # print(category_1)
 # print()
 # # Выводим список товаров для category_1

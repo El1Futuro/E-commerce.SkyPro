@@ -1,12 +1,12 @@
-from typing import Any, List
 from abc import ABC, abstractmethod
+from typing import Any, List
 
 from src.mixinlog import MixinLog
 
 
 class BaseProduct(ABC):
     @abstractmethod
-    def create_product(self, *args, **kwargs):
+    def create_product(self, *args: Any, **kwargs: Any) -> Any:
         pass
 
 
@@ -62,14 +62,14 @@ class Smartphones(Product, MixinLog):
 
     def __init__(
         self,
-            name: str,
-            description: str,
-            price: float,
-            quantity: int,
-            performance: float,
-            model: str,
-            built_in_memory_capacity: str,
-            colour: str,
+        name: str,
+        description: str,
+        price: float,
+        quantity: int,
+        performance: float,
+        model: str,
+        built_in_memory_capacity: str,
+        colour: str,
     ) -> None:
         super().__init__(name, description, price, quantity)
         self.performance = performance
@@ -78,7 +78,7 @@ class Smartphones(Product, MixinLog):
         self.colour = colour
 
     @classmethod
-    def create_product(cls, *args) -> "Smartphones":
+    def create_product(cls, *args: Any) -> "Smartphones":
         return cls(*args)
 
 
@@ -103,7 +103,7 @@ class LawnGrass(Product, MixinLog):
         self.colour = colour
 
     @classmethod
-    def create_product(cls, *args) -> "LawnGrass":
+    def create_product(cls, *args: Any) -> "LawnGrass":
         return cls(*args)
 
 
@@ -138,7 +138,7 @@ class Category:
                 unique_products.append(product)
                 Category.total_unique_products += 1
 
-    def __repr__(self):
+    def __repr__(self: Any) -> Any:
         return super().__repr__()
 
     def add_product(self, product: str) -> None:
