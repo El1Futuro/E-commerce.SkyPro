@@ -1,35 +1,34 @@
 from typing import Any, List
+from abc import ABC, abstractmethod
 
-from src.json_loads import (
-    get_category_description,
-    get_category_products,
-    get_list_categories,
-    get_name_of_categories,
-    json_file_path,
-)
+from src.mixinlog import MixinLog
 
 
-class Product:
-    """Основной класс продуктов"""
+class BaseProduct(ABC):
+    @abstractmethod
+    def create_product(self, *args, **kwargs):
+        pass
 
+
+class Product(BaseProduct, MixinLog):
     name: str
     description: str
     price: float
     quantity: int
 
     def __init__(self, name: str, description: str, price: float, quantity: int) -> None:
-        """Метод для инициализации экземпляра класса. Задаем значения атрибутам экземпляра."""
+
         self.name = name
         self.description = description
         self.price = price
         self.quantity = quantity
+        super().__repr__()
 
     def __str__(self) -> str:
         return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
 
     def __add__(self, other: Any) -> float:
         if type(other) is self.__class__:
-            # if isinstance(other, self.__class__):
             self.sales_revenue = self.price * self.quantity
             other.sales_revenue = other.price * other.quantity
             return self.sales_revenue + other.sales_revenue
@@ -41,7 +40,6 @@ class Product:
 
     @classmethod
     def create_product(cls, name: str, description: str, price: float, quantity: int) -> "Product":
-        """Метод для создания нового продукта и возвращения его экземпляра."""
         return cls(name, description, price, quantity)
 
     @property
@@ -56,38 +54,37 @@ class Product:
             self._price = value
 
 
-class Smartphones(Product):
-    """Дочерний класс от класса Product"""
-
+class Smartphones(Product, MixinLog):
     performance: float
     model: str
-    built_in_memory_capacity: int
+    built_in_memory_capacity: str
     colour: str
 
     def __init__(
         self,
-        name: str,
-        description: str,
-        price: float,
-        quantity: int,
-        performance: float,
-        model: str,
-        built_in_memory_capacity: int,
-        colour: str,
+            name: str,
+            description: str,
+            price: float,
+            quantity: int,
+            performance: float,
+            model: str,
+            built_in_memory_capacity: str,
+            colour: str,
     ) -> None:
-        """Метод для инициализации экземпляра класса. Задаем значения атрибутам экземпляра."""
         super().__init__(name, description, price, quantity)
         self.performance = performance
         self.model = model
         self.built_in_memory_capacity = built_in_memory_capacity
         self.colour = colour
 
+    @classmethod
+    def create_product(cls, *args) -> "Smartphones":
+        return cls(*args)
 
-class LawnGrass(Product):
-    """Дочерний класс от класса Product"""
 
+class LawnGrass(Product, MixinLog):
     country: str
-    germination_period: int
+    germination_period: str
     colour: str
 
     def __init__(
@@ -97,14 +94,17 @@ class LawnGrass(Product):
         price: float,
         quantity: int,
         country: str,
-        germination_period: int,
+        germination_period: str,
         colour: str,
     ) -> None:
-        """Метод для инициализации экземпляра класса. Задаем значения атрибутам экземпляра."""
         super().__init__(name, description, price, quantity)
         self.country = country
         self.germination_period = germination_period
         self.colour = colour
+
+    @classmethod
+    def create_product(cls, *args) -> "LawnGrass":
+        return cls(*args)
 
 
 class Category:
@@ -116,7 +116,6 @@ class Category:
     products: list
 
     def __init__(self, name: str, description: str, products: list) -> None:
-        """Метод для инициализации экземпляра класса. Задаем значения атрибутам экземпляра."""
         self.name = name
         self.description = description
         self.__products = []
@@ -127,6 +126,7 @@ class Category:
             quantity = int(product[2])
             product_obj = Product(name, description, price, quantity)
             self.__products.append(product_obj)
+            super().__repr__()
 
         # Увеличиваем счетчик общего количества категорий
         Category.total_categories += 1
@@ -137,6 +137,9 @@ class Category:
             if product.name not in unique_products:
                 unique_products.append(product)
                 Category.total_unique_products += 1
+
+    def __repr__(self):
+        return super().__repr__()
 
     def add_product(self, product: str) -> None:
         if not isinstance(product, Product):
@@ -162,92 +165,3 @@ class Category:
         for product in self.__products:
             result += f"{product.name}, {product.price} руб. Остаток: {product.quantity} шт.\n"
         return result
-
-
-# Получаем список категорий из файла JSON
-list_categories = get_list_categories(json_file_path)
-
-# Создаем объекты классов Category и Product
-category_1 = Category(
-    get_name_of_categories(list_categories)[0],
-    get_category_description(list_categories)[0],
-    get_category_products(list_categories)["Смартфоны"],
-)
-print(category_1)
-print()
-# Выводим список товаров для category_1
-print(category_1.products_list)
-
-category_2 = Category(
-    get_name_of_categories(list_categories)[1],
-    get_category_description(list_categories)[1],
-    get_category_products(list_categories)["Телевизоры"],
-)
-# Выводим список товаров для category_2
-print(category_2.products_list)
-
-product_1 = Product(
-    list_categories[0]["products"][0]["name"],
-    list_categories[0]["products"][0]["description"],
-    list_categories[0]["products"][0]["price"],
-    list_categories[0]["products"][0]["quantity"],
-)
-print(product_1)
-print(len(product_1))
-print()
-product_2 = Product(
-    list_categories[0]["products"][1]["name"],
-    list_categories[0]["products"][1]["description"],
-    list_categories[0]["products"][1]["price"],
-    list_categories[0]["products"][1]["quantity"],
-)
-
-product_3 = Product(
-    list_categories[0]["products"][2]["name"],
-    list_categories[0]["products"][2]["description"],
-    list_categories[0]["products"][2]["price"],
-    list_categories[0]["products"][2]["quantity"],
-)
-
-product_4 = Product(
-    list_categories[1]["products"][0]["name"],
-    list_categories[1]["products"][0]["description"],
-    list_categories[1]["products"][0]["price"],
-    list_categories[1]["products"][0]["quantity"],
-)
-print(product_1 + product_2)
-print()
-
-product_5 = Product.create_product("Продукт 5", "Описание продукта 1", 80.0, 15)
-product_6 = Product.create_product("Продукт 6", "Описание продукта 2", 100.0, 20)
-
-print(f"Общее количество категорий товаров: {Category.total_categories}")
-print(f"Общее количество уникальных товаров: {Category.total_unique_products}")
-print(f"Категория товара: {category_1.name}")
-print(f"Описание категории: {category_1.description}")
-print(f"Список товаров в категории: {[product[0] for product in get_category_products(list_categories)["Смартфоны"]]}")
-print(f"Категория товара: {category_2.name}")
-print(f"Описание категории: {category_2.description}")
-print(
-    f"Список товаров в категории: {[product[0] for product in get_category_products(list_categories)["Телевизоры"]]}"
-)
-print()
-print(f"Название продукта: {product_1.name}")
-print(f"Описание продукта: {product_1.description}")
-print(f"Цена продукта: {product_1.price}")
-print(f"Количество в наличии: {product_1.quantity}")
-print()
-print(f"Название продукта: {product_2.name}")
-print(f"Описание продукта: {product_2.description}")
-print(f"Цена продукта: {product_2.price}")
-print(f"Количество в наличии: {product_2.quantity}")
-print()
-print(f"Название продукта: {product_3.name}")
-print(f"Описание продукта: {product_3.description}")
-print(f"Цена продукта: {product_3.price}")
-print(f"Количество в наличии: {product_3.quantity}")
-print()
-print(f"Название продукта: {product_4.name}")
-print(f"Описание продукта: {product_4.description}")
-print(f"Цена продукта: {product_4.price}")
-print(f"Количество в наличии: {product_4.quantity}")
