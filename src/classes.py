@@ -141,10 +141,18 @@ class Category:
     def __repr__(self: Any) -> Any:
         return super().__repr__()
 
-    def add_product(self, product: str) -> None:
-        if not isinstance(product, Product):
-            raise TypeError
-        self.products.append(product)
+    def add_product(self, product: Product) -> None:
+        if product.quantity == 0:
+            raise ValueError("Товар с нулевым количеством не может быть добавлен.")
+        self.__products.append(product)
+
+    def average_price(self) -> float:
+        total_price = sum(product.price * product.quantity for product in self.__products)
+        total_quantity = sum(product.quantity for product in self.__products)
+        try:
+            return total_price / total_quantity
+        except ZeroDivisionError:
+            return 0
 
     def __str__(self) -> str:
         all_quantity = len(self)
